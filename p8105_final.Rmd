@@ -9,3 +9,111 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r setup, include=FALSE}
+library(readxl)
+library(syuzhet)
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(tidyverse)
+library(tidytext)
+library(stringr)
+library(forcats)
+library(readr)
+
+
+#tweets <- 
+#  read_excel("~/USA-Geolocated-tweets-free-dataset-Followthehashtag/dashboard_x_usa_x_filter_nativeretweets.xlsx", sheet = "Stream") %>%
+#  janitor::clean_names() %>%
+#  rename(tweet_language = tweet_language_iso_639_1) %>%
+#  filter(tweet_language == "en") %>%
+#  select(-tweet_language)
+  
+
+
+#mySentiment <- get_nrc_sentiment(tweets$tweet_content)
+#us_tweets <- cbind(tweets, mySentiment)
+
+#write.csv(us_tweets, file = "us_tweets.csv")
+
+# The sentiment function takes a really long time so I created a new data file so you don't have to run it
+us_tweets <- read_csv("us_tweets.csv") 
+
+#gets rid of non alpha-numeric characters  
+us_tweets$tweet_content_stripped <- gsub("[^[:alnum:] ]", "",
+                                         us_tweets$tweet_content) 
+#removes all words that are 1-2 letters long
+us_tweets$tweet_content_stripped <- gsub(" *\\b[[:alpha:]]{1,2}\\b *", " ",
+                                         us_tweets$tweet_content_stripped) 
+
+
+sentimentTotals <- data.frame(colSums(us_tweets[,c(20:27)]))
+names(sentimentTotals) <- "count"
+sentimentTotals <- cbind("sentiment" = rownames(sentimentTotals), sentimentTotals)
+
+sentimentTotals
+
+us_tweets$hour <- as.POSIXct(us_tweets$hour, format = " %H:%M")
+
+ggplot(data = us_tweets, aes(x = hour)) +
+  geom_histogram(stat = "count") +
+  xlab("Time") + ylab("Proportion of tweets") +
+  ggtitle("Number of Tweets per Hour") +
+  scale_x_datetime(labels = date_format("%H:%M"))
+
+us_tweets$charsintweet <- sapply(us_tweets$tweet_content, function(x) nchar(x))
+ggplot(data = us_tweets, aes(x = charsintweet)) +
+  geom_histogram(aes(fill = ..count..), binwidth = 8) +
+  theme(legend.position = "none") +
+  xlab("Characters per Tweet") + ylab("Number of tweets") + 
+  scale_fill_gradient(low = "midnightblue", high = "aquamarine4") + 
+  xlim(0,150) + 
+  ggtitle("Characters per Tweet")
+
+
+ggplot(data = sentimentTotals, aes(x = sentiment, y = count)) +
+  geom_bar(aes(fill = sentiment), stat = "identity") +
+  theme(legend.position = "none") +
+  xlab("Sentiment") + ylab("Total Count") + ggtitle("Total Sentiment Score for All Tweets in Sample")
+
+library(wordcloud)
+
+tweet_words <- us_tweets %>% 
+  unnest_tokens(word, tweet_content_stripped)
+
+data(stop_words)
+
+tweet_words <-  
+  anti_join(tweet_words, stop_words)
+
+tweet_words %>%
+  count(word) %>%
+  with(wordcloud(word, n, max.words = 200, 
+                 random.order = FALSE, 
+                 rot.per = 0.35,  
+                 colors = brewer.pal(2, "Dark2")))
+
+library(RColorBrewer)
+pal2 <- brewer.pal(8,"Dark2")
+
+tweet_words %>% 
+  count(word, sort = TRUE) %>% 
+  top_n(10) %>% 
+  mutate(word = fct_reorder(word, n)) %>% 
+  ggplot(aes(x = word, y = n)) + 
+  geom_bar(stat = "identity", fill = "blue", alpha = .6) + 
+  coord_flip()
+
+
+hashtags <- str_extract_all(us_tweets$tweet_content, "#\\S+")
+hashtags <- unlist(hashtags)
+hashtags <- tolower(hashtags)
+hashtags <- gsub("[^[:alnum:] ]", "", hashtags)
+hashtag.df <- data.frame(table(hashtags))
+hashtag.df$hashtags <- as.character(hashtag.df$hashtags)
+hashtag.df$Freq <- as.numeric(as.character(hashtag.df$Freq))
+hashtag.df <- arrange(hashtag.df, desc(Freq))
+print(hashtag.df[1:20,])
+
+```
+

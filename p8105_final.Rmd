@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r setup, include=FALSE}
+```{r, include=FALSE}
 library(readxl)
 library(syuzhet)
 library(dplyr)
@@ -20,8 +20,11 @@ library(tidytext)
 library(stringr)
 library(forcats)
 library(readr)
+library(wordcloud)
+library(RColorBrewer)
+```
 
-
+```{r}
 #tweets <- 
 #  read_excel("~/USA-Geolocated-tweets-free-dataset-Followthehashtag/dashboard_x_usa_x_filter_nativeretweets.xlsx", sheet = "Stream") %>%
 #  janitor::clean_names() %>%
@@ -76,8 +79,6 @@ ggplot(data = sentimentTotals, aes(x = sentiment, y = count)) +
   theme(legend.position = "none") +
   xlab("Sentiment") + ylab("Total Count") + ggtitle("Total Sentiment Score for All Tweets in Sample")
 
-library(wordcloud)
-
 tweet_words <- us_tweets %>% 
   unnest_tokens(word, tweet_content_stripped)
 
@@ -93,7 +94,7 @@ tweet_words %>%
                  rot.per = 0.35,  
                  colors = brewer.pal(2, "Dark2")))
 
-library(RColorBrewer)
+
 pal2 <- brewer.pal(8,"Dark2")
 
 tweet_words %>% 

@@ -1,6 +1,6 @@
 ---
 title: "P8105_final"
-author: "Kaitlin Maciejewski"
+author: "Kaitlin Maciejewski, Morgan de Ferrante, Nadiya Pavlishyn, Kathryn Addabbo, Petter Battten"
 date: "11/14/2017"
 output: html_document
 ---
@@ -22,23 +22,10 @@ library(forcats)
 library(readr)
 library(wordcloud)
 library(RColorBrewer)
+library(plotly)
 ```
 
-```{r}
-#tweets <- 
-#  read_excel("~/USA-Geolocated-tweets-free-dataset-Followthehashtag/dashboard_x_usa_x_filter_nativeretweets.xlsx", sheet = "Stream") %>%
-#  janitor::clean_names() %>%
-#  rename(tweet_language = tweet_language_iso_639_1) %>%
-#  filter(tweet_language == "en") %>%
-#  select(-tweet_language)
-  
-
-
-#mySentiment <- get_nrc_sentiment(tweets$tweet_content)
-#us_tweets <- cbind(tweets, mySentiment)
-
-#write.csv(us_tweets, file = "us_tweets.csv")
-
+```{r load tweet data, cache = TRUE}
 # The sentiment function takes a really long time so I created a new data file so you don't have to run it
 us_tweets <- read_csv("us_tweets.csv") 
 
@@ -48,14 +35,20 @@ us_tweets$tweet_content_stripped <- gsub("[^[:alnum:] ]", "",
 #removes all words that are 1-2 letters long
 us_tweets$tweet_content_stripped <- gsub(" *\\b[[:alpha:]]{1,2}\\b *", " ",
                                          us_tweets$tweet_content_stripped) 
+```
 
-
+```{r create sentiment totals}
 sentimentTotals <- data.frame(colSums(us_tweets[,c(20:27)]))
+
 names(sentimentTotals) <- "count"
-sentimentTotals <- cbind("sentiment" = rownames(sentimentTotals), sentimentTotals)
+
+sentimentTotals <- cbind("sentiment" = rownames(sentimentTotals),
+                         sentimentTotals)
 
 sentimentTotals
+```
 
+```{r number of tweets per hour}
 us_tweets$hour <- as.POSIXct(us_tweets$hour, format = " %H:%M")
 
 ggplot(data = us_tweets, aes(x = hour)) +
@@ -63,22 +56,32 @@ ggplot(data = us_tweets, aes(x = hour)) +
   xlab("Time") + ylab("Proportion of tweets") +
   ggtitle("Number of Tweets per Hour") +
   scale_x_datetime(labels = date_format("%H:%M"))
+```
 
+```{r characters per tweet}
 us_tweets$charsintweet <- sapply(us_tweets$tweet_content, function(x) nchar(x))
+
 ggplot(data = us_tweets, aes(x = charsintweet)) +
   geom_histogram(aes(fill = ..count..), binwidth = 8) +
   theme(legend.position = "none") +
-  xlab("Characters per Tweet") + ylab("Number of tweets") + 
+  xlab("Characters per Tweet") + 
+  ylab("Number of tweets") + 
   scale_fill_gradient(low = "midnightblue", high = "aquamarine4") + 
   xlim(0,150) + 
   ggtitle("Characters per Tweet")
+```
 
-
+```{r sentiments for tweets}
 ggplot(data = sentimentTotals, aes(x = sentiment, y = count)) +
   geom_bar(aes(fill = sentiment), stat = "identity") +
   theme(legend.position = "none") +
-  xlab("Sentiment") + ylab("Total Count") + ggtitle("Total Sentiment Score for All Tweets in Sample")
+  xlab("Sentiment") + 
+  ylab("Total Count") + 
+  ggtitle("Total Sentiment Score for All Tweets in Sample")
+```
 
+
+```{r word cloud}
 tweet_words <- us_tweets %>% 
   unnest_tokens(word, tweet_content_stripped)
 
@@ -93,8 +96,10 @@ tweet_words %>%
                  random.order = FALSE, 
                  rot.per = 0.35,  
                  colors = brewer.pal(2, "Dark2")))
+```
 
 
+```{r top 10 words}
 pal2 <- brewer.pal(8,"Dark2")
 
 tweet_words %>% 
@@ -104,8 +109,9 @@ tweet_words %>%
   ggplot(aes(x = word, y = n)) + 
   geom_bar(stat = "identity", fill = "blue", alpha = .6) + 
   coord_flip()
+```
 
-
+```{r hashtag df}
 hashtags <- str_extract_all(us_tweets$tweet_content, "#\\S+")
 hashtags <- unlist(hashtags)
 hashtags <- tolower(hashtags)
@@ -115,6 +121,46 @@ hashtag.df$hashtags <- as.character(hashtag.df$hashtags)
 hashtag.df$Freq <- as.numeric(as.character(hashtag.df$Freq))
 hashtag.df <- arrange(hashtag.df, desc(Freq))
 print(hashtag.df[1:20,])
-
 ```
 
+
+```{r map tweets}
+us_tweets %>%
+  filter(country == "US") %>% 
+  mutate(text_label = str_c("followers: ", followers, '\nlocation: ', place_as_appears_on_bio)) %>%
+  plot_ly(x = ~longitude, y = ~latitude, type = "scatter", mode = "markers",
+          alpha = 0.5, 
+          color = ~followers, text = ~text_label)
+
+us_tweets %>%
+  filter(country == "US") %>% 
+  mutate(text_label = str_c("sentiment: ", positive, '\nlocation: ', place_as_appears_on_bio)) %>% 
+  plot_ly(x = ~longitude, y = ~latitude, type = "scatter", mode = "markers",
+          alpha = 0.5, 
+          color = ~positive, colors = "Set2", text = ~text_label)
+
+
+# map specific name of sentiment
+
+# filter(us_tweets$country == "US") %>% 
+#   mutate(text_label = str_c("sentiment: ", sentimentTotals$sentiment, '\nlocation: ', us_tweets$place_as_appears_on_bio)) %>% 
+#   plot_ly(x = ~us_tweets$longitude, y = ~us_tweets$latitude, type = "scatter", mode = "markers",
+#           alpha = 0.5, 
+#           color = ~sentimentTotals$sentiment, colors = "Set2", text = ~text_label)
+
+#how to map sentiments (ie for slider?)
+```
+
+
+```{r map tweets per hour, eval = FALSE}
+
+#how to map interactive tweets per hour?
+
+us_tweets$hour <- as.POSIXct(us_tweets$hour, format = " %H:%M")
+
+us_tweets %>%
+  filter(country == "US") %>% 
+  plot_ly(x = ~longitude, y = ~latitude, type = "scatter", mode = "markers",
+          alpha = 0.5, 
+          color = ~hour)
+```

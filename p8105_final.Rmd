@@ -29,9 +29,11 @@ library(plotly)
 # The sentiment function takes a really long time so I created a new data file so you don't have to run it
 us_tweets <- read_csv("us_tweets.csv") 
 
-#gets rid of non alpha-numeric characters  
-us_tweets$tweet_content_stripped <- gsub("[^[:alnum:] ]", "",
+#gets rid of non alphabetic characters  
+us_tweets$tweet_content_stripped <- gsub("[^[:alpha:] ]", "",
                                          us_tweets$tweet_content) 
+
+
 #removes all words that are 1-2 letters long
 us_tweets$tweet_content_stripped <- gsub(" *\\b[[:alpha:]]{1,2}\\b *", " ",
                                          us_tweets$tweet_content_stripped) 

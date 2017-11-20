@@ -114,8 +114,8 @@ tweet_words %>%
 ```{r hashtag df}
 hashtags <- str_extract_all(us_tweets$tweet_content, "#\\S+")
 hashtags <- unlist(hashtags)
-hashtags <- tolower(hashtags)
 hashtags <- gsub("[^[:alnum:] ]", "", hashtags)
+hashtags <- tolower(hashtags)
 hashtag.df <- data.frame(table(hashtags))
 hashtag.df$hashtags <- as.character(hashtag.df$hashtags)
 hashtag.df$Freq <- as.numeric(as.character(hashtag.df$Freq))

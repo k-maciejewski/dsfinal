@@ -48,7 +48,15 @@ sentimentTotals <- cbind("sentiment" = rownames(sentimentTotals),
                          sentimentTotals)
 
 sentimentTotals
+
 ```
+#Converts to long formatt
+```{r}
+us_tweets_long <- gather(us_tweets, sentiment, count, anger:trust, 
+                         factor_key = TRUE)
+```
+
+
 
 ```{r number of tweets per hour}
 us_tweets$hour <- as.POSIXct(us_tweets$hour, format = " %H:%M")

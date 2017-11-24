@@ -1,6 +1,6 @@
 ---
 title: "P8105_final"
-author: "Kaitlin Maciejewski, Morgan de Ferrante, Nadiya Pavlishyn, Kathryn Addabbo, Petter Battten"
+author: "Kaitlin Maciejewski, Morgan de Ferrante, Nadiya Pavlishyn, Kathryn Addabbo, Peter Batten"
 date: "11/14/2017"
 output: html_document
 ---
@@ -50,12 +50,12 @@ sentimentTotals <- cbind("sentiment" = rownames(sentimentTotals),
 sentimentTotals
 
 ```
-#Converts to long formatt
-```{r}
+
+
+```{r Converts to long format}
 us_tweets_long <- gather(us_tweets, sentiment, count, anger:trust, 
                          factor_key = TRUE)
 ```
-
 
 
 ```{r number of tweets per hour}

@@ -177,6 +177,12 @@ us_tweets_long %>%
 
 ```{r}
 usa_sentiments = us_tweets %>%
+  separate(place_as_appears_on_bio, into = c("state", "delete"), ",") %>%
+  filter(delete == "USA") 
+  
+select("place_as_appears_on_bio", "negative", "positive")
+  
+us_tweets %>%
   filter(country == "US") %>%
   select("place_as_appears_on_bio", "negative", "positive") %>%
   separate(place_as_appears_on_bio, into = c("city", "state"), ",") %>%
@@ -184,5 +190,27 @@ usa_sentiments = us_tweets %>%
   group_by(state) %>%
   summarize(pos_sum = sum(positive),
             neg_sum = sum(negative))
+
+state_tweets = us_tweets %>%
+  select("X1", "longitude", "latitude") 
+
+library(sp)
+library(maps)
+library(maptools)
+
+latlong2state <- function(state_tweets) {
+    states <- map('state', fill=TRUE, col="transparent", plot=FALSE)
+    IDs <- sapply(strsplit(states$names, ":"), function(x) x[1])
+    states_sp <- map2SpatialPolygons(states, IDs=IDs,
+                     proj4string=CRS("+proj=longlat +datum=WGS84"))
+
+    states_tweets_SP <- SpatialPoints(states_tweets, 
+                    proj4string=CRS("+proj=longlat +datum=WGS84"))
+    
+    indices <- over(states_tweets_SP, states_sp)
+
+    stateNames <- sapply(states_sp@polygons, function(x) x@ID)
+    stateNames[indices]
+}
 
 ```

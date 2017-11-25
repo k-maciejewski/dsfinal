@@ -174,3 +174,15 @@ us_tweets_long %>%
           alpha = 0.5, 
           color = ~sentiment, text = ~hour)
 ```
+
+```{r}
+usa_sentiments = us_tweets %>%
+  filter(country == "US") %>%
+  select("place_as_appears_on_bio", "negative", "positive") %>%
+  separate(place_as_appears_on_bio, into = c("city", "state"), ",") %>%
+  na.omit(state) %>%
+  group_by(state) %>%
+  summarize(pos_sum = sum(positive),
+            neg_sum = sum(negative))
+
+```

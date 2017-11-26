@@ -194,6 +194,8 @@ us_tweets %>%
 state_tweets = us_tweets %>%
   select("X1", "longitude", "latitude") 
 
+###KATHRYN: try detaching package if it is interfering with the packages you need
+detach(package:purrr)
 library(sp)
 library(maps)
 library(maptools)

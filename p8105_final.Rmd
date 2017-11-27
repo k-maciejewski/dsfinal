@@ -176,19 +176,6 @@ us_tweets_long %>%
 ```
 
 ```{r}
-usa_sentiments = us_tweets %>%
-  separate(place_as_appears_on_bio, into = c("state", "delete"), ",") %>%
-  filter(delete == "USA") 
-  
-us_tweets %>%
-  filter(country == "US") %>%
-  select("place_as_appears_on_bio", "negative", "positive") %>%
-  separate(place_as_appears_on_bio, into = c("city", "state"), ",") %>%
-  na.omit(state) %>%
-  group_by(state) %>%
-  summarize(pos_sum = sum(positive),
-            neg_sum = sum(negative))
-
 state_tweets = us_tweets %>%
   select("longitude", "latitude")
 
@@ -214,4 +201,12 @@ latlong2state <- function(state_tweets) {
 }
 
 us_tweets$state_name <- stri_trans_totitle(latlong2state(state_tweets))
+
+us_tweets %>%
+  filter(country == "US") %>%
+  select("state_name", "negative", "positive")  %>%
+  na.omit(state_name) %>%
+  group_by(state_name) %>%
+  summarize(pos_sum = sum(positive),
+            neg_sum = sum(negative))
 ```

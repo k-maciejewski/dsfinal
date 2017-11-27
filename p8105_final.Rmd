@@ -192,13 +192,17 @@ us_tweets %>%
             neg_sum = sum(negative))
 
 state_tweets = us_tweets %>%
-  select("X1", "longitude", "latitude") 
+  select("X1", "longitude", "latitude")
+
+state_tweets <- state_tweets %>% select(-X1)
 
 ###KATHRYN: try detaching package if it is interfering with the packages you need
-detach(package:purrr)
+#detach(package:purrr)
 library(sp)
 library(maps)
 library(maptools)
+library(gpclib)
+library(stringi)
 
 latlong2state <- function(state_tweets) {
     states <- map('state', fill=TRUE, col="transparent", plot=FALSE)
@@ -206,7 +210,7 @@ latlong2state <- function(state_tweets) {
     states_sp <- map2SpatialPolygons(states, IDs=IDs,
                      proj4string=CRS("+proj=longlat +datum=WGS84"))
 
-    states_tweets_SP <- SpatialPoints(states_tweets, 
+    states_tweets_SP <- SpatialPoints(state_tweets, 
                     proj4string=CRS("+proj=longlat +datum=WGS84"))
     
     indices <- over(states_tweets_SP, states_sp)
@@ -215,4 +219,5 @@ latlong2state <- function(state_tweets) {
     stateNames[indices]
 }
 
+us_tweets$state_name <- stri_trans_totitle(latlong2state(state_tweets))
 ```

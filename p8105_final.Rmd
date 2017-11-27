@@ -180,8 +180,6 @@ usa_sentiments = us_tweets %>%
   separate(place_as_appears_on_bio, into = c("state", "delete"), ",") %>%
   filter(delete == "USA") 
   
-select("place_as_appears_on_bio", "negative", "positive")
-  
 us_tweets %>%
   filter(country == "US") %>%
   select("place_as_appears_on_bio", "negative", "positive") %>%
@@ -192,12 +190,8 @@ us_tweets %>%
             neg_sum = sum(negative))
 
 state_tweets = us_tweets %>%
-  select("X1", "longitude", "latitude")
+  select("longitude", "latitude")
 
-state_tweets <- state_tweets %>% select(-X1)
-
-###KATHRYN: try detaching package if it is interfering with the packages you need
-#detach(package:purrr)
 library(sp)
 library(maps)
 library(maptools)

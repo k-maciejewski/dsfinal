@@ -208,14 +208,22 @@ us_tweets$state_name <- stri_trans_totitle(latlong2state(state_tweets))
 ```{r}
 us_sentiments = us_tweets %>%
   filter(country == "US") %>%
-  select("state_name", "negative", "positive")  %>%
+  select(c(32, 20:29)) %>%
   na.omit(state_name) %>%
   group_by(state_name) %>%
-  summarize(pos_sum = sum(positive),
-            neg_sum = sum(negative)) %>%
+  summarise_each(funs(sum)) %>%
   mutate(pos_sum = as.numeric(pos_sum),
-         neg_sum = as.numeric(neg_sum))
+         neg_sum = as.numeric(neg_sum),
+         anger_sum = as.numeric(anger_sum,
+         anticipation_sum = as.numeric(anticipation_sum),
+         disgust_sum = as.numeric(disgust_sum),
+         fear_sum = as.numeric(fear_sum),
+         joy_sum = as.numeric(joy_sum),
+         sadness_sum = as.numeric(sadness_sum),
+         surprise_sum = as.numeric(surprise_sum),
+         trust_sum = as.numeric(trust_sum)))
 ```
+
 
 ```{r}
 library(choroplethr)

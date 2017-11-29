@@ -200,13 +200,34 @@ latlong2state <- function(state_tweets) {
     stateNames[indices]
 }
 
+us_tweets$state_name <- latlong2state(state_tweets)
+```
+
 us_tweets$state_name <- stri_trans_totitle(latlong2state(state_tweets))
 
-us_tweets %>%
+```{r}
+us_sentiments = us_tweets %>%
   filter(country == "US") %>%
   select("state_name", "negative", "positive")  %>%
   na.omit(state_name) %>%
   group_by(state_name) %>%
   summarize(pos_sum = sum(positive),
-            neg_sum = sum(negative))
+            neg_sum = sum(negative)) %>%
+  mutate(pos_sum = as.numeric(pos_sum),
+         neg_sum = as.numeric(neg_sum))
+```
+
+```{r}
+library(choroplethr)
+library(choroplethrMaps)
+
+us_sentiments %>%
+  select("state_name", "neg_sum") %>%
+  rename(region = state_name, value = neg_sum) %>%
+  state_choropleth()
+
+us_sentiments %>%
+  select("state_name", "pos_sum") %>%
+  rename(region = state_name, value = pos_sum) %>%
+  state_choropleth()
 ```

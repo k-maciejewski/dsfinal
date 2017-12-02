@@ -23,6 +23,13 @@ library(readr)
 library(wordcloud)
 library(RColorBrewer)
 library(plotly)
+library(choroplethr)
+library(choroplethrMaps)
+library(sp)
+library(maps)
+library(maptools)
+library(gpclib)
+library(stringi)
 ```
 
 ```{r load tweet data, cache = TRUE}
@@ -39,6 +46,26 @@ us_tweets$tweet_content_stripped <- gsub(" *\\b[[:alpha:]]{1,2}\\b *", " ",
                                          us_tweets$tweet_content_stripped) 
 ```
 
+
+Your R Markdown should include the following topics. Depending on your project type the amount of discussion you devote to each of them will vary:
+
+Motivation: Provide an overview of the project goals and motivation.
+
+Related work: Anything that inspired you, such as a paper, a web site, or something we discussed in class.
+
+Initial questions: What questions are you trying to answer? How did these questions evolve over the course of the project? What new questions did you consider in the course of your analysis?
+
+Data: Source, scraping method, cleaning, etc.
+
+Exploratory analysis: Visualizations, summaries, and exploratory statistical analyses. Justify the steps you took, and show any major changes to your ideas.
+
+Additional analysis: If you undertake formal statistical analyses, describe these in detail
+
+Discussion: What were your findings? Are they what you expect? What insights into the data can you make?
+
+
+
+
 ```{r create sentiment totals}
 sentimentTotals <- data.frame(colSums(us_tweets[,c(20:27)]))
 
@@ -48,7 +75,6 @@ sentimentTotals <- cbind("sentiment" = rownames(sentimentTotals),
                          sentimentTotals)
 
 sentimentTotals
-
 ```
 
 
@@ -134,7 +160,7 @@ print(hashtag.df[1:20,])
 ```
 
 
-```{r map tweets}
+```{r map tweets all US}
 
 #followers
 us_tweets %>%
@@ -175,15 +201,9 @@ us_tweets_long %>%
           color = ~sentiment, text = ~hour)
 ```
 
-```{r}
+```{r map by state}
 state_tweets = us_tweets %>%
   select("longitude", "latitude")
-
-library(sp)
-library(maps)
-library(maptools)
-library(gpclib)
-library(stringi)
 
 latlong2state <- function(state_tweets) {
     states <- map('state', fill=TRUE, col="transparent", plot=FALSE)
@@ -203,31 +223,30 @@ latlong2state <- function(state_tweets) {
 us_tweets$state_name <- latlong2state(state_tweets)
 ```
 
-us_tweets$state_name <- stri_trans_totitle(latlong2state(state_tweets))
 
-```{r}
+```{r sum across states}
 us_sentiments = us_tweets %>%
   filter(country == "US") %>%
   select(c(32, 20:29)) %>%
   na.omit(state_name) %>%
   group_by(state_name) %>%
-  summarise_each(funs(sum)) %>%
-  mutate(pos_sum = as.numeric(pos_sum),
-         neg_sum = as.numeric(neg_sum))
+  summarise_all(funs(sum)) %>%
+  mutate(positive = as.numeric(positive),
+         negative = as.numeric(negative))
 ```
 
 
-```{r}
-library(choroplethr)
-library(choroplethrMaps)
-
+```{r graph state heat map}
 us_sentiments %>%
-  select("state_name", "neg_sum") %>%
-  rename(region = state_name, value = neg_sum) %>%
+  select("state_name", "negative") %>%
+  rename(region = state_name, value = negative) %>%
   state_choropleth()
 
 us_sentiments %>%
-  select("state_name", "pos_sum") %>%
-  rename(region = state_name, value = pos_sum) %>%
+  select("state_name", "positive") %>%
+  rename(region = state_name, value = positive) %>%
   state_choropleth()
 ```
+
+
+

@@ -213,15 +213,7 @@ us_sentiments = us_tweets %>%
   group_by(state_name) %>%
   summarise_each(funs(sum)) %>%
   mutate(pos_sum = as.numeric(pos_sum),
-         neg_sum = as.numeric(neg_sum),
-         anger_sum = as.numeric(anger_sum,
-         anticipation_sum = as.numeric(anticipation_sum),
-         disgust_sum = as.numeric(disgust_sum),
-         fear_sum = as.numeric(fear_sum),
-         joy_sum = as.numeric(joy_sum),
-         sadness_sum = as.numeric(sadness_sum),
-         surprise_sum = as.numeric(surprise_sum),
-         trust_sum = as.numeric(trust_sum)))
+         neg_sum = as.numeric(neg_sum))
 ```
 
 

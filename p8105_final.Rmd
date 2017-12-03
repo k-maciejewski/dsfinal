@@ -1,12 +1,11 @@
 ---
 title: "P8105_final"
 author: "Kaitlin Maciejewski, Morgan de Ferrante, Nadiya Pavlishyn, Kathryn Addabbo, Peter Batten"
-date: "11/14/2017"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 ```
 
 ```{r, include=FALSE}
@@ -47,21 +46,27 @@ us_tweets$tweet_content_stripped <- gsub(" *\\b[[:alpha:]]{1,2}\\b *", " ",
 ```
 
 
-Your R Markdown should include the following topics. Depending on your project type the amount of discussion you devote to each of them will vary:
+#Your R Markdown should include the following topics. Depending on your project type the amount of discussion you devote to each of them will vary:
 
-Motivation: Provide an overview of the project goals and motivation.
+#Motivation: 
+An analysis of almost any social media data can can be rather telling of how subgroups of a population interact with each other on a large scale. We are interested in the content of these interactions and how they vary throughout the United States over the few days that our data spans.
 
 Related work: Anything that inspired you, such as a paper, a web site, or something we discussed in class.
 
-Initial questions: What questions are you trying to answer? How did these questions evolve over the course of the project? What new questions did you consider in the course of your analysis?
+#Initial questions: 
+What questions are you trying to answer? How did these questions evolve over the course of the project? What new questions did you consider in the course of your analysis?
 
-Data: Source, scraping method, cleaning, etc.
+#Data: 
+Source, scraping method, cleaning, etc.
 
-Exploratory analysis: Visualizations, summaries, and exploratory statistical analyses. Justify the steps you took, and show any major changes to your ideas.
+#Exploratory analysis: 
+Visualizations, summaries, and exploratory statistical analyses. Justify the steps you took, and show any major changes to your ideas.
 
-Additional analysis: If you undertake formal statistical analyses, describe these in detail
+#Additional analysis: 
+If you undertake formal statistical analyses, describe these in detail
 
-Discussion: What were your findings? Are they what you expect? What insights into the data can you make?
+#Discussion: 
+What were your findings? Are they what you expect? What insights into the data can you make?
 
 
 
@@ -93,6 +98,9 @@ ggplot(data = us_tweets, aes(x = hour)) +
   ggtitle("Number of Tweets per Hour") +
   scale_x_datetime(labels = date_format("%H:%M"))
 ```
+
+From this graph, we noticed that we are missing some time intervals in our data set. We are not sure why this is. The website from which we obtained the data must not have scraped for these times. 
+
 
 ```{r characters per tweet}
 us_tweets$charsintweet <- sapply(us_tweets$tweet_content, function(x) nchar(x))
@@ -160,7 +168,7 @@ print(hashtag.df[1:20,])
 ```
 
 
-```{r map tweets all US}
+```{r map tweets all US in plotly, eval = FALSE}
 
 #followers
 us_tweets %>%
@@ -189,10 +197,31 @@ us_tweets_long %>%
           color = ~sentiment, text = ~text_label)
 ```
 
+```{r map tweets all US in ggplot}
+#positive tweets, ggplot
+us_tweets %>%
+  filter(country == "US") %>% 
+  ggplot(aes(x = longitude, y = latitude, color = positive)) + 
+  geom_point(alpha = .1) +
+  scale_colour_gradientn(colours = rainbow(10)) +
+  ggtitle("Positive Tweets") +
+  scale_fill_discrete(name="Positivity rating")
+  
+  
+#name of sentiment, ggplot
+us_tweets_long %>%
+  filter(country == "US") %>% 
+  filter(count > 0) %>% 
+  ggplot(aes(x = longitude, y = latitude, color = factor(sentiment))) + 
+  geom_point(alpha = .1)+
+  ggtitle("Tweet Sentiments") +
+  scale_fill_discrete(name="Sentiment")
+```
+
 
 ```{r map tweets per hour, eval = FALSE}
 
-#how to map interactive tweets per hour?
+#map interactive tweets per hour in dashboard
 
 us_tweets_long %>%
   filter(country == "US") %>% 
@@ -200,6 +229,7 @@ us_tweets_long %>%
           alpha = 0.5, 
           color = ~sentiment, text = ~hour)
 ```
+
 
 ```{r map by state}
 state_tweets = us_tweets %>%
@@ -247,6 +277,3 @@ us_sentiments %>%
   rename(region = state_name, value = positive) %>%
   state_choropleth()
 ```
-
-
-

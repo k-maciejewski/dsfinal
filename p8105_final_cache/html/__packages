@@ -15,3 +15,12 @@ tidytext
 RColorBrewer
 wordcloud
 plotly
+XML
+acs
+choroplethr
+choroplethrMaps
+sp
+maps
+maptools
+gpclib
+stringi

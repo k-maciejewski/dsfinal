@@ -205,6 +205,8 @@ us_tweets %>%
   geom_point(alpha = .6) +
   scale_colour_gradientn(colours = rainbow(10)) +
   ggtitle("Positive Tweets")
+
+
   
   
 #name of sentiment, ggplot
@@ -215,6 +217,7 @@ us_tweets_long %>%
   geom_point(alpha = .6)+
   ggtitle("Tweet Sentiments") +
   scale_color_discrete(name="Sentiment")
+
 ```
 
 

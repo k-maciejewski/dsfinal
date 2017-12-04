@@ -232,6 +232,7 @@ us_tweets_long %>%
           color = ~sentiment, text = ~hour)
 ```
 
+Due to the fact that our location column displays differences in specificity, we built a function that took the latitude and longitude of each tweet and converted it to the state in which the tweet originated from. We then proceeded to add that to our original dataset. 
 
 ```{r map by state}
 state_tweets = us_tweets %>%
@@ -252,14 +253,17 @@ latlong2state <- function(state_tweets) {
     stateNames[indices]
 }
 
-us_tweets$state_name <- latlong2state(state_tweets)
+state_name = latlong2state(state_tweets)
+
+us_tweets = cbind(state_name, us_tweets)
 ```
 
+To evaluate overall sentiment by state, we selected the appropriate columns, then grouped and summed by state, making sure to discount missing locations. Maine, Alaska and Hawaii were not included in this survey, however the 48 state count comes from Virginia and the District of Columbia recieving individual designations. 
 
 ```{r sum across states}
 us_sentiments = us_tweets %>%
   filter(country == "US") %>%
-  select(c(32, 20:29)) %>%
+  select(c(1, 21:30)) %>%
   na.omit(state_name) %>%
   group_by(state_name) %>%
   summarise_all(funs(sum)) %>%
@@ -267,15 +271,20 @@ us_sentiments = us_tweets %>%
          negative = as.numeric(negative))
 ```
 
+The following heatmap shows the level of positive and negative sentiment across the United States during the 48 hour period of our dataset. Maine, Alaska and Hawaii are blacked out as tweets from those states were not recorded. 
+
+We can observe with these two maps that states like California and Texas are consistently the highest ranked, which can be assumed to be population related. It is interesting because the state with the lowest positive and negative sentiment scores is Washington. This could be for two reasons: population difference or that twweets have less sentimental words than other states and therefore don't generate as strong sentiment scores. 
 
 ```{r graph state heat map}
 us_sentiments %>%
   select("state_name", "negative") %>%
   rename(region = state_name, value = negative) %>%
-  state_choropleth()
+  state_choropleth(title = "Negative Sentiment across the U.S.",
+                   legend = "Sentiment Score")  
 
 us_sentiments %>%
   select("state_name", "positive") %>%
   rename(region = state_name, value = positive) %>%
-  state_choropleth()
+  state_choropleth(title = "Positive Sentiment Across the U.S.",
+                   legend = "Sentiment Score")
 ```

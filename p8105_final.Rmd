@@ -9,7 +9,6 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 ```
 
 ```{r, include=FALSE}
-library(readxl)
 library(syuzhet)
 library(dplyr)
 library(ggplot2)
@@ -27,7 +26,6 @@ library(choroplethrMaps)
 library(sp)
 library(maps)
 library(maptools)
-library(gpclib)
 library(stringi)
 ```
 
@@ -36,17 +34,12 @@ library(stringi)
 us_tweets <- read_csv("us_tweets.csv") 
 
 #gets rid of non alphabetic characters  
-us_tweets$tweet_content_stripped <- gsub("[^[:alpha:] ]", "",
-                                         us_tweets$tweet_content) 
+us_tweets$tweet_content_stripped <- gsub("[^[:alpha:] ]", "", us_tweets$tweet_content) 
 
 
 #removes all words that are 1-2 letters long
-us_tweets$tweet_content_stripped <- gsub(" *\\b[[:alpha:]]{1,2}\\b *", " ",
-                                         us_tweets$tweet_content_stripped) 
+us_tweets$tweet_content_stripped <- gsub(" *\\b[[:alpha:]]{1,2}\\b *", " ", us_tweets$tweet_content_stripped) 
 ```
-
-
-#Your R Markdown should include the following topics. Depending on your project type the amount of discussion you devote to each of them will vary:
 
 #Motivation: 
 An analysis of almost any social media data can can be rather telling of how subgroups of a population interact with each other on a large scale. We are interested in the content of these interactions and how they vary throughout the United States over the few days that our data spans.
@@ -62,8 +55,6 @@ Source, scraping method, cleaning, etc.
 #Exploratory analysis: 
 Visualizations, summaries, and exploratory statistical analyses. Justify the steps you took, and show any major changes to your ideas.
 
-#Additional analysis: 
-If you undertake formal statistical analyses, describe these in detail
 
 #Discussion: 
 What were your findings? Are they what you expect? What insights into the data can you make?
@@ -168,36 +159,9 @@ print(hashtag.df[1:20,])
 ```
 
 
-```{r map tweets all US in plotly, eval = FALSE}
+When mapping the positive scores for all tweets, we see that there is a moderate to low score through the US. At this scale, we cannot see a definitive trend at the state level. However, we do see that there are not a lot of tweets generated in the midwest or north west. There does seem that there are slightly more positive tweets from the middle of the country.
 
-#followers
-us_tweets %>%
-  filter(country == "US") %>% 
-  mutate(text_label = str_c("followers: ", followers, '\nlocation: ', place_as_appears_on_bio)) %>%
-  plot_ly(x = ~longitude, y = ~latitude, type = "scatter", mode = "markers",
-          alpha = 0.5, 
-          color = ~followers, text = ~text_label)
-
-#positive score
-us_tweets %>%
-  filter(country == "US") %>% 
-  mutate(text_label = str_c("sentiment: ", positive, '\nlocation: ', place_as_appears_on_bio)) %>% 
-  plot_ly(x = ~longitude, y = ~latitude, type = "scatter", mode = "markers",
-          alpha = 0.5, 
-          color = ~positive, colors = "Set2", text = ~text_label)
-
-
-#name of sentiment
-us_tweets_long %>%
-  filter(country == "US") %>% 
-  filter(count > 0) %>% 
-  mutate(text_label = str_c("sentiment: ", sentiment, '\nlocation: ', place_as_appears_on_bio)) %>% 
-  plot_ly(x = ~longitude, y = ~latitude, type = "scatter", mode = "markers",
-          alpha = 0.5, 
-          color = ~sentiment, text = ~text_label)
-```
-
-```{r map tweets all US in ggplot}
+```{r map positive tweets all US in ggplot}
 #positive tweets, ggplot
 us_tweets %>%
   filter(country == "US") %>% 
@@ -205,10 +169,11 @@ us_tweets %>%
   geom_point(alpha = .6) +
   scale_colour_gradientn(colours = rainbow(10)) +
   ggtitle("Positive Tweets")
+```
 
-
+When mapping sentiment across all US, we see an overwhelming amount of "trust" tweets. We are not quite sure what this emotion means. 
   
-  
+```{r map tweet sentiments all US}  
 #name of sentiment, ggplot
 us_tweets_long %>%
   filter(country == "US") %>% 
@@ -220,17 +185,23 @@ us_tweets_long %>%
 
 ```
 
+When we filter out trust, we see that surprise and joy seem to be commonly tweeted emotions.
 
-```{r map tweets per hour, eval = FALSE}
-
-#map interactive tweets per hour in dashboard
-
+```{r map_tweet_sentiments_no_trust}  
+#name of sentiment, ggplot
 us_tweets_long %>%
   filter(country == "US") %>% 
-  plot_ly(x = ~longitude, y = ~latitude, type = "scatter", mode = "markers",
-          alpha = 0.5, 
-          color = ~sentiment, text = ~hour)
+  filter(count > 0) %>% 
+  filter(sentiment != "trust") %>% 
+  ggplot(aes(x = longitude, y = latitude, color = factor(sentiment))) + 
+  geom_point(alpha = .6)+
+  ggtitle("Tweet Sentiments") +
+  scale_color_discrete(name="Sentiment")
+
 ```
+
+
+
 
 Due to the fact that our location column displays differences in specificity, we built a function that took the latitude and longitude of each tweet and converted it to the state in which the tweet originated from. We then proceeded to add that to our original dataset. 
 

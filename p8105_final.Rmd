@@ -55,6 +55,11 @@ Source, scraping method, cleaning, etc.
 #Exploratory analysis: 
 Visualizations, summaries, and exploratory statistical analyses. Justify the steps you took, and show any major changes to your ideas.
 
+Our additional shiny repos can be found:
+
+[state](https://github.com/k-maciejewski/p8105_final_shiny_app)
+
+[US](https://github.com/k-maciejewski/p8105_final_shinyUS)
 
 #Discussion: 
 What were your findings? Are they what you expect? What insights into the data can you make?

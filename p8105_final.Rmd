@@ -1,11 +1,13 @@
 ---
 title: "P8105_final"
 author: "Kaitlin Maciejewski, Morgan de Ferrante, Nadiya Pavlishyn, Kathryn Addabbo, Peter Batten"
-output: html_document
+output: 
+   html_document:
+    code_folding: hide
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 ```
 
 ```{r, include=FALSE}
@@ -29,17 +31,6 @@ library(maptools)
 library(stringi)
 ```
 
-```{r load tweet data, cache = TRUE}
-# The sentiment function takes a really long time so I created a new data file so you don't have to run it
-us_tweets <- read_csv("us_tweets.csv") 
-
-#gets rid of non alphabetic characters  
-us_tweets$tweet_content_stripped <- gsub("[^[:alpha:] ]", "", us_tweets$tweet_content) 
-
-
-#removes all words that are 1-2 letters long
-us_tweets$tweet_content_stripped <- gsub(" *\\b[[:alpha:]]{1,2}\\b *", " ", us_tweets$tweet_content_stripped) 
-```
 
 #Motivation: 
 An analysis of almost any social media data can can be rather telling of how subgroups of a population interact with each other on a large scale. We are interested in the content of these interactions and how they vary throughout the United States over the few days that our data spans.
@@ -52,18 +43,28 @@ What questions are you trying to answer? How did these questions evolve over the
 #Data: 
 Source, scraping method, cleaning, etc.
 
+```{r load tweet data, cache = TRUE}
+# The sentiment function takes a really long time so I created a new data file so you don't have to run it
+us_tweets <- read_csv("us_tweets.csv") 
+
+#gets rid of non alphabetic characters  
+us_tweets$tweet_content_stripped <- gsub("[^[:alpha:] ]", "", us_tweets$tweet_content) 
+
+
+#removes all words that are 1-2 letters long
+us_tweets$tweet_content_stripped <- gsub(" *\\b[[:alpha:]]{1,2}\\b *", " ", us_tweets$tweet_content_stripped) 
+```
+
+
 #Exploratory analysis: 
 Visualizations, summaries, and exploratory statistical analyses. Justify the steps you took, and show any major changes to your ideas.
 
-Our additional shiny repos can be found:
+Our additional shiny repos can be found: [here for all US](https://github.com/k-maciejewski/p8105_final_shinyUS) and [here for individual states](https://github.com/k-maciejewski/p8105_final_shiny_app).
 
-[state](https://github.com/k-maciejewski/p8105_final_shiny_app)
 
-[US](https://github.com/k-maciejewski/p8105_final_shinyUS)
 
 #Discussion: 
 What were your findings? Are they what you expect? What insights into the data can you make?
-
 
 
 
@@ -176,7 +177,7 @@ us_tweets %>%
   ggtitle("Positive Tweets")
 ```
 
-When mapping sentiment across all US, we see an overwhelming amount of "trust" tweets. We are not quite sure what this emotion means. 
+When mapping sentiment across all US, we see an overwhelming amount of "trust" tweets. We are not quite sure what this emotion means. We found that most tweets including "job" or "jobs" mapped to the emotion "trust." There are many tweets with those words, so it may be interesting to filter out that emotion.
   
 ```{r map tweet sentiments all US}  
 #name of sentiment, ggplot

@@ -41,7 +41,6 @@ In a rapidly changing and increasingly tech-based world, people now have the pow
 
 
 #Initial questions: 
-What questions are you trying to answer? How did these questions evolve over the course of the project? What new questions did you consider in the course of your analysis?
 
 Our initial ideas for analysis were: 
 
@@ -86,6 +85,7 @@ The dataset we used from [Followthehashtag](http://followthehashtag.com/datasets
 
 We chose this dataset mainly because it was already in a nice form, and needed minimal cleaning. It included the varaibles we were interested in, such as tweet content for sentiment analysis and location data for mapping.
 
+Throughout our project, we needed to subset the data because the initial data set was too large. We will explain more about this process in the sections below.
 
 ```{r load tweet data, cache = TRUE}
 # The sentiment function takes a really long time so I created a new data file so it didn't have to be run each time
@@ -130,12 +130,10 @@ Matthew Jockers’s sentiment function is essentially a dictionary that assigns 
 
 
 #Overall Tweet Analysis
-A shiny repo [here for overall tweet analysis](https://github.com/mdeferrante/twitter_shiny)
-
 
 The ‘overall analysis’ shows summarizing information on the tweets overall, not divided by state or sentiment, in order to give a better understanding of the dataset as a whole. Initial data cleaning for text mining included creating a new variable called tweet_content_stripped, which took initial tweet content and used pattern matching to remove non-alphabetic characters (i.e. numbers and symbols were removed) and words that were only one or two letters long. Additionally, we subsetted the data to only include tweets that were in English. 
 
-The resulting shiny uses a subset of the data, only 100,000 tweets, since the Shiny App could not host such a large dataset. The two visualizations in the the tabset show the most frequent words overall in tweet_content_stripped. Note that after plots were made, “jobs” and “amp” were included in the top words, but these were later recoded in tweet_content_stripped. Since ‘job’ already appeared in the most frequent words, to avoid redundancy ‘jobs’ was recoded to ‘job’, and thus the top word in the bar chart includes count for the appearance of both jobs and jobs. ‘Amp’ was removed in the tweet_content_stripped, since we determined this was an abbreviation for ampersand and thus not meaningful for our data. 
+The [resulting shiny](https://github.com/mdeferrante/twitter_shiny) uses a subset of the data, only 100,000 tweets, since the Shiny App could not host such a large dataset. The two visualizations in the the tabset show the most frequent words overall in tweet_content_stripped. Note that after plots were made, “jobs” and “amp” were included in the top words, but these were later recoded in tweet_content_stripped. Since ‘job’ already appeared in the most frequent words, to avoid redundancy ‘jobs’ was recoded to ‘job’, and thus the top word in the bar chart includes count for the appearance of both jobs and jobs. ‘Amp’ was removed in the tweet_content_stripped, since we determined this was an abbreviation for ampersand and thus not meaningful for our data. 
 
 The output below shows total counts for all sentiments found in tweets in the dataset. Each tweet might have more than one sentiment. 
 
@@ -250,9 +248,9 @@ print(hashtag.df[1:20,])
 
 #US Tweet Mapping
 
-A shiny repo for this analysis can be found: [here](https://github.com/k-maciejewski/p8105_final_shinyUS)
+A shiny repo for this analysis can be found: [here](https://github.com/k-maciejewski/p8105_final_shinyUS). The shiny app allows further interaction with the data.
 
-When mapping the positive scores for all tweets, we see that there is a moderate to low score through the US. At this scale, we cannot see a definitive trend at the state level. However, we do see that there are not a lot of tweets generated in the midwest or north west. There does seem that there are slightly more positive tweets from the middle of the country.
+When mapping the positive scores for all tweets, we see that there is a moderate to low score through the US. At this scale, we cannot see a definitive trend. We also see that there are not a lot of tweets generated in the midwest or north west. This may be because there are fewer people living in these sections of the country, or because the site "followthehashtag" simply did not scrape data from these locations. There does seem that there are slightly more positive tweets from the middle of the country.
 
 ```{r map positive tweets all US in ggplot}
 #positive tweets, ggplot

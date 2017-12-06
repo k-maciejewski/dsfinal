@@ -368,11 +368,15 @@ In order to make the shiny app work, we needed to subset the data; the initial c
 
 #By-state Analysis
 
+
 A shiny repo is [here for individual states](https://github.com/k-maciejewski/p8105_final_shiny_app)
 
-(explain code)
+The plots above for New York are an example of the interactive State Shiny App created to offer the opportunity to compare states, which can be accessed LINKhereLINK.   The plots in the State Shiny App were created in plotly and widgets were created to choose the first and the second state in a drop down manner.  The location plots displays tweet sentiments across latitude and longitude location for the state. The bar graph displays counts of sentiments to specify which sentiments were most expressed in the state, as this was not always apparent in areas of heavy tweeting.
 
-(explain plots)
+One of the main goals in this comparison was to obtain as much state information as possible to create the most comprehensive plots. Location data was contained in a “place as appears on bio” column, which was based on the location users set, as well as latitude and longitude.  As a result, we used both sets of location data to index out/obtain state names. 
+
+Obtaining data through latitude and longitude proved to be valuable, but unfortunately still left us with approximately 20,000 missing values for state.  We resorted to parsing the data in the place as appears on bio column to explore whether we can get any of those missing values filled in via the information in that column.  Two formats seemed to be popular, “StateName, USA” and “City, StateAbbreviation”.  We focused on extracting the data from these two formats, as they would most likely give us the most information (line by line explanation can be found in code).  After filling in for as many missing values as we could from the information we gathered from place as appears on bio, we were able to get missingness down to under 2,000 observations.
+
 
 #Discussion
 

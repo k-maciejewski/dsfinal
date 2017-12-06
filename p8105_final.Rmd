@@ -35,7 +35,7 @@ library(stringi)
 #Motivation: 
 An analysis of almost any social media data can can be rather telling of how subgroups of a population interact with each other on a large scale. We are interested in the content of these interactions and how they vary throughout the United States over the few days that our data spans.
 
-Ever wanted to know what everyone’s been tweeting about? Well, thanks to Twitter’s use of the hasthag system, that’s already possible. But how about the most popular places everyone’s been tweeting from? Or how about a simplified way to see how all those twitter users are feeling? Thanks to some in-depth exploratory analyses from Dr. Jeff Goldsmith’s* (Columbia University’s Mailman School of Public Health) Team AwesomeTM,  and courtesy of Followthehashtag’s publicly available twitter APIs, even this is possible. 
+Ever wanted to know what everyone’s been tweeting about? Well, thanks to Twitter’s use of the hasthag system, that’s already possible. But how about the most popular places everyone’s been tweeting from? Or how about a simplified way to see how all those twitter users are feeling? Thanks to some in-depth exploratory analyses from [Dr. Jeff Goldsmith’s](http://jeffgoldsmith.com/DSI/) (Columbia University’s Mailman School of Public Health) Team AwesomeTM,  and courtesy of Followthehashtag’s publicly available twitter APIs, even this is possible. 
 
 In a rapidly changing and increasingly tech-based world, people now have the power to essentially react to global events happening thousands of miles away in real time. Social media as whole, but twitter especially, are some of the biggest domains for capturing these reactions. Our team’s motivation for this analysis comes from a desire to aggregate these reactions in as compact and sensible format as possible. 
 
@@ -101,8 +101,6 @@ We chose this dataset mainly because it was already in a nice form, and needed m
 # us_tweets <- cbind(tweets, mySentiment)
 # write.csv(us_tweets, file = "us_tweets.csv")
 
-
-
 us_tweets <- read_csv("us_tweets.csv") 
 
 #gets rid of non alphabetic characters  
@@ -129,16 +127,12 @@ We used the [Syuzhet package from GitHub](https://github.com/mjockers/syuzhet) (
 About the Sentiment function:
 Matthew Jockers’s sentiment function is essentially a dictionary that assigns different words to different sentiments. The general sentiments he uses in this function (and subsequently the ones we use in our analyses) are trust, joy, anger, sadness, fear, disgust, anticipation, and surprise. While some of these sentiments may not seem intuitive to use, altogether they form a relatively broad spectrum of moods and emotions which make for interesting analyses.
 
-Visualizations, summaries, and exploratory statistical analyses. Justify the steps you took, and show any major changes to your ideas.
-
-Our additional shiny repos can be found: [here for all US](https://github.com/k-maciejewski/p8105_final_shinyUS) and [here for individual states](https://github.com/k-maciejewski/p8105_final_shiny_app).
 
 
+#Overall Tweet Analysis
+A shiny repo [here for overall tweet analysis](https://github.com/mdeferrante/twitter_shiny)
 
-#Discussion: 
-What were your findings? Are they what you expect? What insights into the data can you make?
 
-##Overall Tweet Analysis
 The ‘overall analysis’ shows summarizing information on the tweets overall, not divided by state or sentiment, in order to give a better understanding of the dataset as a whole. Initial data cleaning for text mining included creating a new variable called tweet_content_stripped, which took initial tweet content and used pattern matching to remove non-alphabetic characters (i.e. numbers and symbols were removed) and words that were only one or two letters long. Additionally, we subsetted the data to only include tweets that were in English. 
 
 The resulting shiny uses a subset of the data, only 100,000 tweets, since the Shiny App could not host such a large dataset. The two visualizations in the the tabset show the most frequent words overall in tweet_content_stripped. Note that after plots were made, “jobs” and “amp” were included in the top words, but these were later recoded in tweet_content_stripped. Since ‘job’ already appeared in the most frequent words, to avoid redundancy ‘jobs’ was recoded to ‘job’, and thus the top word in the bar chart includes count for the appearance of both jobs and jobs. ‘Amp’ was removed in the tweet_content_stripped, since we determined this was an abbreviation for ampersand and thus not meaningful for our data. 
@@ -223,7 +217,6 @@ tweet_words %>%
                  colors = brewer.pal(2, "Dark2")))
 ```
 
-
 The bar chart provides a more simple representation of common words, showing the top 10 most frequent words. These top 10 words, starting with the most frequent, are job, hiring, careerarc, click, retail, recommend, fit, hospitality, apply, and sales.
 
 ```{r top 10 words}
@@ -254,6 +247,10 @@ hashtag.df <- arrange(hashtag.df, desc(Freq))
 print(hashtag.df[1:20,])
 ```
 
+
+#US Tweet Mapping
+
+A shiny repo for this analysis can be found: [here](https://github.com/k-maciejewski/p8105_final_shinyUS)
 
 When mapping the positive scores for all tweets, we see that there is a moderate to low score through the US. At this scale, we cannot see a definitive trend at the state level. However, we do see that there are not a lot of tweets generated in the midwest or north west. There does seem that there are slightly more positive tweets from the middle of the country.
 
@@ -295,8 +292,6 @@ us_tweets_long %>%
   scale_color_discrete(name="Sentiment")
 
 ```
-
-
 
 
 Due to the fact that our location column displays differences in specificity, we built a function that took the latitude and longitude of each tweet and converted it to the state in which the tweet originated from. We then proceeded to add that to our original dataset. 
@@ -355,3 +350,8 @@ us_sentiments %>%
   state_choropleth(title = "Positive Sentiment Across the U.S.",
                    legend = "Sentiment Score")
 ```
+
+
+#By-state Analysis
+
+A shiny repo [here for individual states](https://github.com/k-maciejewski/p8105_final_shiny_app)

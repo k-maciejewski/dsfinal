@@ -358,7 +358,9 @@ us_sentiments %>%
                    legend = "Sentiment Score")
 ```
 
-(explain choropleth code)
+By selecting the state name and corresponding sentiment columnns and renaming them to fit the state_choropleth function, we can then apply them and the state_choropleth function to fill the state shapes with the appropriate level of shading for their sum values. 
+
+However to make this plot more interesting and interactive in shiny, we used the plot_geo function and hover capabilities to show additional sums in each state. 
 
 In order to make the shiny app work, we needed to subset the data; the initial csv was too large. 
 

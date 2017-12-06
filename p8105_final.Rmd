@@ -143,8 +143,7 @@ The ‘overall analysis’ shows summarizing information on the tweets overall, 
 
 The resulting shiny uses a subset of the data, only 100,000 tweets, since the Shiny App could not host such a large dataset. The two visualizations in the the tabset show the most frequent words overall in tweet_content_stripped. Note that after plots were made, “jobs” and “amp” were included in the top words, but these were later recoded in tweet_content_stripped. Since ‘job’ already appeared in the most frequent words, to avoid redundancy ‘jobs’ was recoded to ‘job’, and thus the top word in the bar chart includes count for the appearance of both jobs and jobs. ‘Amp’ was removed in the tweet_content_stripped, since we determined this was an abbreviation for ampersand and thus not meaningful for our data. 
 
-The sentiments plot below gives an general understanding of the most common sentiments throughout the tweets. When observing comparisons of states, it can be helpful to see the overall distribution of sentiments so that we can recognize states that have contrasting distributions of these sentiments. 
-
+The output below shows total counts for all sentiments found in tweets in the dataset. Each tweet might have more than one sentiment. 
 
 ```{r create sentiment totals}
 sentimentTotals <- data.frame(colSums(us_tweets[,c(20:27)]))
@@ -164,6 +163,8 @@ us_tweets_long <- gather(us_tweets, sentiment, count, anger:trust,
 ```
 
 
+Number of tweets per hour (below) is a time series plot showing the distribution of tweets at different hours of the day. The dataset includes recorded tweets across a 48 hour span, so we found it interesting that we are missing some time intervals at the same time both days. This could be related to the way in which the data was collected, but provided information on the data does not mention why these gaps occur.
+
 ```{r number of tweets per hour}
 us_tweets$hour <- as.POSIXct(us_tweets$hour, format = " %H:%M")
 
@@ -177,8 +178,7 @@ tweets_over_time <-
 
 ```
 
-Number of tweets per hour is a time series plot showing the distribution of tweets at different hours of the day. The dataset includes recorded tweets across a 48 hour span, so we found it interesting that we are missing some time intervals at the same time both days. This could be related to the way in which the data was collected, but provided information on the data does not mention why these gaps occur.
-
+This plot was part of our exploratory data analysis. It shows number of characters per tweet. Although interesting, we did not feel it was relevant to our final website analyses and was not included in the website. 
 
 ```{r characters per tweet}
 us_tweets$charsintweet <- sapply(us_tweets$tweet_content, function(x) nchar(x))
@@ -193,6 +193,8 @@ ggplot(data = us_tweets, aes(x = charsintweet)) +
   ggtitle("Characters per Tweet")
 ```
 
+The sentiments plot below gives an general understanding of the most common sentiments throughout the tweets. When observing comparisons of states, it can be helpful to see the overall distribution of sentiments so that we can recognize states that have contrasting distributions of these sentiments. 
+
 ```{r sentiments for tweets}
 ggplot(data = sentimentTotals, aes(x = sentiment, y = count)) +
   geom_bar(aes(fill = sentiment), stat = "identity") +
@@ -202,6 +204,7 @@ ggplot(data = sentimentTotals, aes(x = sentiment, y = count)) +
   ggtitle("Total Sentiment Score for All Tweets in Sample")
 ```
 
+The interactive word cloud in our shiny app does work on the Rmd, so the above word cloud is not the same as what we have on our website, but I will give a description of the word cloud that can be found on our website. The word cloud was generated using a subset where only words appearing more than 200 times are included. The website has a zoom slider allows you to zoom in and out to see some of the most and least frequent words (of frequency over 200). Word size corresponds to frequency, and zooming out to .5 shows the most frequent words used in the tweets, but due to the large proportion of more frequent words, it makes it very difficult to see less common words. Hovering the cursor over each word shows its frequency among all the tweets. The word cloud generated spaces the words differently and in different colors each time it is loaded, but the word sizes remain the same for each zoom amount. 
 
 ```{r word cloud}
 tweet_words <- us_tweets %>% 
@@ -220,7 +223,6 @@ tweet_words %>%
                  colors = brewer.pal(2, "Dark2")))
 ```
 
-The interactive word cloud in our shiny app does work on the Rmd, so the above word cloud is not the same as what we have on our website, but I will give a description of the word cloud that can be found on our website. The word cloud was generated using a subset where only words appearing more than 200 times are included. The website has a zoom slider allows you to zoom in and out to see some of the most and least frequent words (of frequency over 200). Word size corresponds to frequency, and zooming out to .5 shows the most frequent words used in the tweets, but due to the large proportion of more frequent words, it makes it very difficult to see less common words. Hovering the cursor over each word shows its frequency among all the tweets. The word cloud generated spaces the words differently and in different colors each time it is loaded, but the word sizes remain the same for each zoom amount. 
 
 The bar chart provides a more simple representation of common words, showing the top 10 most frequent words. These top 10 words, starting with the most frequent, are job, hiring, careerarc, click, retail, recommend, fit, hospitality, apply, and sales.
 

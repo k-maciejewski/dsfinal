@@ -385,11 +385,11 @@ plot_geo(us_sentiments, locationmode = 'USA-states') %>%
 In order to make the shiny app work, we needed to subset the data; the initial csv was too large. By filtering for the United States, then selecting the sentiment variables, latitude and longitude, hour and the logged location from the twitter account, we were able to complete the following analysis. 
 
 #By-state Analysis
+![Example plots from State Shiny App](screenshot.png)
 
+A shiny repo is [here](https://github.com/k-maciejewski/p8105_final_shiny_app) and the app can be accessed [here](https://np2547.shinyapps.io/states_shiny/).
 
-A shiny repo is [here for individual states](https://github.com/k-maciejewski/p8105_final_shiny_app)
-
-The plots above for New York are an example of the interactive State Shiny App created to offer the opportunity to compare states, which can be accessed LINKhereLINK.   The plots in the State Shiny App were created in plotly and widgets were created to choose the first and the second state in a drop down manner.  The location plots displays tweet sentiments across latitude and longitude location for the state. The bar graph displays counts of sentiments to specify which sentiments were most expressed in the state, as this was not always apparent in areas of heavy tweeting.
+The plots above for New York are an example of the interactive State Shiny App created to offer the opportunity to compare states.  The plots in the State Shiny App were created in plotly and widgets were created to choose the first and the second state in a drop down manner.  The location plots displays tweet sentiments across latitude and longitude location for the state. The bar graph displays counts of sentiments to specify which sentiments were most expressed in the state, as this was not always apparent in areas of heavy tweeting.
 
 One of the main goals in this comparison was to obtain as much state information as possible to create the most comprehensive plots. Location data was contained in a “place as appears on bio” column, which was based on the location users set, as well as latitude and longitude.  As a result, we used both sets of location data to index out/obtain state names. 
 

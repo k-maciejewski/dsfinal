@@ -376,4 +376,19 @@ A shiny repo is [here for individual states](https://github.com/k-maciejewski/p8
 
 #Discussion
 
-(tie to current events)
+###Current Events: April 14, 2016 to April 16, 2016
+
+In a world where news breaks so frequently and the time frame for an event to be deemed "current" is arguably shorter than a day, April 2016 might seem a lot farther back in the past than it actually was. Believe it or not, there were actually quite a few notable events around the world that took place in this short span. Our goal in this section was to try and tie the emotions of twitter users at the time to events they were responding to, hoping to make logical connections about why tweets express the sentiments that they do.
+
+That being said, some of the most notable events from April 14 to April 16 of 2016 include: The Golden State Warriors finishing the NBA season with the best record in history, Hillary Clinton and Bernie Sanders' have a contentious debate in New York City, deadly earthquakes strike Japan, North Korea fails in a missile-launch attempt, and public health officials confirmed a link between the Zika virus and the devastating birth defect microcephaly. Obviously this is not a comprehensive list, but is sufficient enough to say that the average twitter user would have heard of at least one the events.
+
+##What conclusions can we draw?
+
+The list of events above is also sufficient enough such that they would elicit the whole range of emotions from twitter users that we used in our analyses (anger, anticipation, disgust, fear, joy sadness, surprise, trust). Thus, we can generally expect specific tweets with certain sentiments to correlate with at least some of these events (Example: a tweet expressing joy has decent chance of being about the Warriors' season, and a tweet expressing sadness has decent chance of being about the earthquakes in Japan).
+
+As expected, we see more highly concentrated tweet distributions in more populated areas. Perhaps less expected, we see that the distribution of all the sentiments is relatively equal across all the regions of the U.S. From this, we can make a general inference about information spread across the U.S.: it's fairly equal, and not particularly subject to geographical discrimination. Due to the nature of the dataset, there are certainly many more interesting conclusions that can be made that we haven't yet!
+
+##Acknowledgement of the limitations of Twitter:
+
+Since neither Twitter or our data analyses will ever be perfect, there are some limitations we'd like to address. 
+

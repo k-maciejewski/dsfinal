@@ -32,7 +32,7 @@ library(stringi)
 ```
 
 
-#Motivation: 
+#Motivation
 An analysis of almost any social media data can can be rather telling of how subgroups of a population interact with each other on a large scale. We are interested in the content of these interactions and how they vary throughout the United States over the few days that our data spans.
 
 Ever wanted to know what everyone’s been tweeting about? Well, thanks to Twitter’s use of the hasthag system, that’s already possible. But how about the most popular places everyone’s been tweeting from? Or how about a simplified way to see how all those twitter users are feeling? Thanks to some in-depth exploratory analyses from [Dr. Jeff Goldsmith’s](http://jeffgoldsmith.com/DSI/) (Columbia University’s Mailman School of Public Health) Team AwesomeTM,  and courtesy of Followthehashtag’s publicly available twitter APIs, even this is possible. 
@@ -40,7 +40,7 @@ Ever wanted to know what everyone’s been tweeting about? Well, thanks to Twitt
 In a rapidly changing and increasingly tech-based world, people now have the power to essentially react to global events happening thousands of miles away in real time. Social media as whole, but twitter especially, are some of the biggest domains for capturing these reactions. Our team’s motivation for this analysis comes from a desire to aggregate these reactions in as compact and sensible format as possible. 
 
 
-#Initial questions: 
+#Initial questions
 
 Our initial ideas for analysis were: 
 
@@ -80,7 +80,7 @@ We decided to focus on just a few areas:
 - Correlation between location and sentiment
 
 
-#Data: 
+#Data 
 The dataset we used from [Followthehashtag](http://followthehashtag.com/datasets/free-twitter-dataset-usa-200000-free-usa-tweets/) is a comprehensive but incomplete list of 200,000 tweets from users across the United States (and outside the U.S., but we focused on domestic tweets) from April 14, 2016 to April 16, 2016, which comes as an easy-to-access csv file within a zipped folder. For each tweet, user information such as name, location (latitude/longitude), number of followers, and the entire content of the tweet itself is given. 
 
 We chose this dataset mainly because it was already in a nice form, and needed minimal cleaning. It included the varaibles we were interested in, such as tweet content for sentiment analysis and location data for mapping.
@@ -120,7 +120,11 @@ us_tweets$tweet_content_stripped <- gsub("Jobs", " job ", us_tweets$tweet_conten
 ```
 
 
-#Exploratory analysis: 
+#Challenges
+
+We had a few challenges during this project, which mostly related to the data. Since we used an existing data set, we are not sure how the data was gathered. We noticed that there are some missing states or times. This may be because people were not tweeting or because "FollowtheHashtag" simply did not gather these data. We also needed to change formats, gather, and spread, in order to make the variables usable for analysis. When we made shiny apps, we had to subset the data because of limits on size.
+
+#Exploratory analysis
 
 We used the [Syuzhet package from GitHub](https://github.com/mjockers/syuzhet) (thank you Matthew Jockers!) to extract sentiments from tweet content. Our primary analyses consisted of mapping these tweets (using tweet location) as observable sentiments across the United States, which gives a nice aggregate picture of how the U.S. twitterverse was feeling during the dates mentioned above. 
 
@@ -196,7 +200,7 @@ ggplot(data = sentimentTotals, aes(x = sentiment, y = count)) +
   ggtitle("Total Sentiment Score for All Tweets in Sample")
 ```
 
-The interactive word cloud in our shiny app does work on the Rmd, so the above word cloud is not the same as what we have on our website, but I will give a description of the word cloud that can be found on our website. The word cloud was generated using a subset where only words appearing more than 200 times are included. The website has a zoom slider allows you to zoom in and out to see some of the most and least frequent words (of frequency over 200). Word size corresponds to frequency, and zooming out to .5 shows the most frequent words used in the tweets, but due to the large proportion of more frequent words, it makes it very difficult to see less common words. Hovering the cursor over each word shows its frequency among all the tweets. The word cloud generated spaces the words differently and in different colors each time it is loaded, but the word sizes remain the same for each zoom amount. 
+The interactive word cloud in our shiny app does not work on the Rmd, so the below word cloud is not the same as what we have on our website, but I will give a description of the word cloud that can be found on our website. The word cloud was generated using a subset where only words appearing more than 200 times are included. The website has a zoom slider allows you to zoom in and out to see some of the most and least frequent words (of frequency over 200). Word size corresponds to frequency, and zooming out to .5 shows the most frequent words used in the tweets, but due to the large proportion of more frequent words, it makes it very difficult to see less common words. Hovering the cursor over each word shows its frequency among all the tweets. The word cloud generated spaces the words differently and in different colors each time it is loaded, but the word sizes remain the same for each zoom amount. 
 
 ```{r word cloud}
 tweet_words <- us_tweets %>% 
@@ -231,7 +235,10 @@ top_words <-
   coord_flip() +
   labs(title = "10 Most Frequent Words", y = "Count", x = "Word")
 
+top_words
 ```
+
+Below we see the 20 most frequent hash-tags in the dataset. This did not add more information, so we did not use in subsequent analysis. 
 
 ```{r hashtag df}
 hashtags <- str_extract_all(us_tweets$tweet_content, "#\\S+")
@@ -248,9 +255,11 @@ print(hashtag.df[1:20,])
 
 #US Tweet Mapping
 
-A shiny repo for this analysis can be found: [here](https://github.com/k-maciejewski/p8105_final_shinyUS). The shiny app allows further interaction with the data.
+A shiny repo for this analysis can be found: [here](https://github.com/k-maciejewski/p8105_final_shinyUS). The shiny [app](https://kmaciejewski.shinyapps.io/p8105_final_shinyus/) allows further interaction with the data. The below plots are not interactive, since using plotly would substantially slow compiling of the file.
 
-When mapping the positive scores for all tweets, we see that there is a moderate to low score through the US. At this scale, we cannot see a definitive trend. We also see that there are not a lot of tweets generated in the midwest or north west. This may be because there are fewer people living in these sections of the country, or because the site "followthehashtag" simply did not scrape data from these locations. There does seem that there are slightly more positive tweets from the middle of the country.
+In order to create the aggregate U.S. maps, we filtered location to only include US, and plotted longitude, latitude and outcome of interest.
+
+When mapping the positive scores for all tweets, we see that there is a moderate to low score through the US. At this scale, we cannot see a definitive trend. We also see that there are not a lot of tweets generated in the midwest or north west. This may be because there are fewer people living in these sections of the country, or because the site "Followthehashtag" simply did not scrape data from these locations. There does seem that there are slightly more positive tweets from the middle of the country.
 
 ```{r map positive tweets all US in ggplot}
 #positive tweets, ggplot
@@ -331,7 +340,7 @@ us_sentiments = us_tweets %>%
          negative = as.numeric(negative))
 ```
 
-The following heatmap shows the level of positive and negative sentiment across the United States during the 48 hour period of our dataset. Maine, Alaska and Hawaii are blacked out as tweets from those states were not recorded. 
+The following heatmaps show the level of negative and positive sentiment across the United States during the 48 hour period of our dataset. Maine, Alaska and Hawaii are blacked out, as tweets from those states were not recorded. 
 
 We can observe with these two maps that states like California and Texas are consistently the highest ranked, which can be assumed to be population related. It is interesting because the state with the lowest positive and negative sentiment scores is Washington. This could be for two reasons: population difference or that twweets have less sentimental words than other states and therefore don't generate as strong sentiment scores. 
 
@@ -349,7 +358,20 @@ us_sentiments %>%
                    legend = "Sentiment Score")
 ```
 
+(explain choropleth code)
+
+In order to make the shiny app work, we needed to subset the data; the initial csv was too large. 
+
+
 
 #By-state Analysis
 
-A shiny repo [here for individual states](https://github.com/k-maciejewski/p8105_final_shiny_app)
+A shiny repo is [here for individual states](https://github.com/k-maciejewski/p8105_final_shiny_app)
+
+(explain code)
+
+(explain plots)
+
+#Discussion
+
+(tie to current events)

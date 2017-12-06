@@ -360,9 +360,9 @@ us_sentiments %>%
 
 By selecting the state name and corresponding sentiment columnns and renaming them to fit the state_choropleth function, we can then apply them and the state_choropleth function to fill the state shapes with the appropriate level of shading for their sum values. 
 
-However to make this plot more interesting and interactive in shiny, we used the plot_geo function and hover capabilities to show additional sums in each state. 
+To modify these results to function in plotly and become interactive on shiny, the plot_geo function was used. Radio buttons were created by first converting the dataset to long format with regard to negative and positive sentiment. Then when the sentiment value is positive or negative, it will show the appropriate sums. Also, the hover function is used to print all the other sentiment totals when hovering the cursor over the specific state. 
 
-In order to make the shiny app work, we needed to subset the data; the initial csv was too large. 
+In order to make the shiny app work, we needed to subset the data; the initial csv was too large. By filtering for the United States, then selecting the sentiment variables, latitude and longitude, hour and the logged location from the twitter account, we were able to complete the following analysis. 
 
 
 

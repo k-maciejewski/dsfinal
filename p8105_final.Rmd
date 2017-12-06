@@ -35,7 +35,7 @@ library(stringi)
 #Motivation
 An analysis of almost any social media data can can be rather telling of how subgroups of a population interact with each other on a large scale. We are interested in the content of these interactions and how they vary throughout the United States over the few days that our data spans.
 
-Ever wanted to know what everyone’s been tweeting about? Well, thanks to Twitter’s use of the hasthag system, that’s already possible. But how about the most popular places everyone’s been tweeting from? Or how about a simplified way to see how all those twitter users are feeling? Thanks to some in-depth exploratory analyses from [Dr. Jeff Goldsmith’s](http://jeffgoldsmith.com/DSI/) (Columbia University’s Mailman School of Public Health) Team AwesomeTM,  and courtesy of Followthehashtag’s publicly available twitter APIs, even this is possible. 
+Ever wanted to know what everyone’s been tweeting about? Well, thanks to Twitter’s use of the hasthag system, that’s already possible. But how about the most popular places everyone’s been tweeting from? Or how about a simplified way to see how all those twitter users are feeling? Thanks to some in-depth exploratory analyses from [Dr. Jeff Goldsmith’s](http://jeffgoldsmith.com/DSI/) (Columbia University’s Mailman School of Public Health) Team Awesome$^{TM},  and courtesy of Followthehashtag’s publicly available twitter APIs, even this is possible. 
 
 In a rapidly changing and increasingly tech-based world, people now have the power to essentially react to global events happening thousands of miles away in real time. Social media as whole, but twitter especially, are some of the biggest domains for capturing these reactions. Our team’s motivation for this analysis comes from a desire to aggregate these reactions in as compact and sensible format as possible. 
 
@@ -342,7 +342,7 @@ us_sentiments = us_tweets %>%
 
 The following heatmaps show the level of negative and positive sentiment across the United States during the 48 hour period of our dataset. Maine, Alaska and Hawaii are blacked out, as tweets from those states were not recorded. 
 
-We can observe with these two maps that states like California and Texas are consistently the highest ranked, which can be assumed to be population related. It is interesting because the state with the lowest positive and negative sentiment scores is Washington. This could be for two reasons: population difference or that twweets have less sentimental words than other states and therefore don't generate as strong sentiment scores. 
+We can observe with these two maps that states like California and Texas are consistently the highest ranked, which can be assumed to be population related. It is interesting because the state with the lowest positive and negative sentiment scores is Washington. This could be for two reasons: population difference or that tweets have less sentimental words than other states and therefore don't generate as strong sentiment scores. 
 
 ```{r graph state heat map}
 us_sentiments %>%
@@ -360,11 +360,29 @@ us_sentiments %>%
 
 By selecting the state name and corresponding sentiment columnns and renaming them to fit the state_choropleth function, we can then apply them and the state_choropleth function to fill the state shapes with the appropriate level of shading for their sum values. 
 
-To modify these results to function in plotly and become interactive on shiny, the plot_geo function was used. Radio buttons were created by first converting the dataset to long format with regard to negative and positive sentiment. Then when the sentiment value is positive or negative, it will show the appropriate sums. Also, the hover function is used to print all the other sentiment totals when hovering the cursor over the specific state. 
+To modify these results to function in plotly and become interactive on shiny, the plot_geo function was used. Radio buttons were created by first converting the dataset to long format with regard to negative and positive sentiment. Then when the sentiment value is positive or negative, it will show the appropriate sums. Also, the hover function is used to print all the other sentiment totals when hovering the cursor over the specific state. The specific code is shown below.
+
+us_sentiments = gather(us_sentiments, neg_pos, count, negative:positive, factor_key = TRUE)
+state_pos_neg = us_sentiments %>% distinct(neg_pos) %>% pull()
+
+radioButtons("state_pos_neg", label= h3("Select Positive or Negative Sentiment Totals"), choices = state_pos_neg, selected = NULL,  inline = T, width = NULL, choiceNames = NULL, choiceValues = NULL)
+
+renderPlotly({
+g <- list(scope = 'usa',
+          projection = list(type = 'albers usa'))
+
+us_sentiments$hover <- with(us_sentiments, paste(state_name, '<br>', "Anger", anger, "Anticipation", anticipation, "<br>",
+                           "Disgust", disgust, "Fear", fear,
+                           "<br>", "Joy", joy, "Sadness", sadness, '<br>', "Surprise", surprise, "Trust", trust))
+
+plot_geo(us_sentiments, locationmode = 'USA-states') %>%
+  filter(neg_pos == input$state_pos_neg) %>%
+  add_trace(z = ~count, text = ~hover, locations = ~abr, color = ~count, colors = 'Reds') %>%
+  layout(title = 'Sentiment Sums across the U.S.',
+         geo = g)}
+         
 
 In order to make the shiny app work, we needed to subset the data; the initial csv was too large. By filtering for the United States, then selecting the sentiment variables, latitude and longitude, hour and the logged location from the twitter account, we were able to complete the following analysis. 
-
-
 
 #By-state Analysis
 

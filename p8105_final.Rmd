@@ -35,13 +35,57 @@ library(stringi)
 #Motivation: 
 An analysis of almost any social media data can can be rather telling of how subgroups of a population interact with each other on a large scale. We are interested in the content of these interactions and how they vary throughout the United States over the few days that our data spans.
 
-Related work: Anything that inspired you, such as a paper, a web site, or something we discussed in class.
+Ever wanted to know what everyone’s been tweeting about? Well, thanks to Twitter’s use of the hasthag system, that’s already possible. But how about the most popular places everyone’s been tweeting from? Or how about a simplified way to see how all those twitter users are feeling? Thanks to some in-depth exploratory analyses from Dr. Jeff Goldsmith’s* (Columbia University’s Mailman School of Public Health) Team AwesomeTM,  and courtesy of Followthehashtag’s publicly available twitter APIs, even this is possible. 
+
+In a rapidly changing and increasingly tech-based world, people now have the power to essentially react to global events happening thousands of miles away in real time. Social media as whole, but twitter especially, are some of the biggest domains for capturing these reactions. Our team’s motivation for this analysis comes from a desire to aggregate these reactions in as compact and sensible format as possible. 
+
 
 #Initial questions: 
 What questions are you trying to answer? How did these questions evolve over the course of the project? What new questions did you consider in the course of your analysis?
 
+Our initial ideas for analysis were: 
+
+
+- Identify different languages
+
+- Which accounts get the most traffic
+
+- Geolocation traffic
+
+- Any events happened during time period, measure influence
+
+- Percent that use emoji’s, hashtags
+
+- Positive/negative words, correlation with time?
+
+- Percent of tweets devoted to a given topic: political, food, hobbies/lifestyle, etc.
+
+- Correlation between location and sentiment
+
+- Advertising percentage, success
+
+- Content analysis: top tweets & retweets
+
+- Correlation of tweets and events of days covered
+
+
+As we looked at the dataset and analyzed the variables available to us, we found that some of these questions were outside of the scope of the information or tools available to us.
+
+We decided to focus on just a few areas:
+
+
+- Positive/negative words
+
+- Correlation with time
+
+- Correlation between location and sentiment
+
+
 #Data: 
-Source, scraping method, cleaning, etc.
+The dataset we used from [Followthehashtag](http://followthehashtag.com/datasets/free-twitter-dataset-usa-200000-free-usa-tweets/) is a comprehensive but incomplete list of 200,000 tweets from users across the United States (and outside the U.S., but we focused on domestic tweets) from April 14, 2016 to April 16, 2016, which comes as an easy-to-access csv file within a zipped folder. For each tweet, user information such as name, location (latitude/longitude), number of followers, and the entire content of the tweet itself is given. 
+
+We chose this dataset mainly because it was already in a nice form, and needed minimal cleaning. It included the varaibles we were interested in, such as tweet content for sentiment analysis and location data for mapping.
+
 
 ```{r load tweet data, cache = TRUE}
 # The sentiment function takes a really long time so I created a new data file so you don't have to run it
@@ -57,6 +101,12 @@ us_tweets$tweet_content_stripped <- gsub(" *\\b[[:alpha:]]{1,2}\\b *", " ", us_t
 
 
 #Exploratory analysis: 
+
+We used the [Syuzhet package from GitHub](https://github.com/mjockers/syuzhet) (thank you Matthew Jockers!) to extract sentiments from tweet content. Our primary analyses consisted of mapping these tweets (using tweet location) as observable sentiments across the United States, which gives a nice aggregate picture of how the U.S. twitterverse was feeling during the dates mentioned above. 
+
+About the Sentiment function:
+Matthew Jockers’s sentiment function is essentially a dictionary that assigns different words to different sentiments. The general sentiments he uses in this function (and subsequently the ones we use in our analyses) are trust, joy, anger, sadness, fear, disgust, anticipation, and surprise. While some of these sentiments may not seem intuitive to use, altogether they form a relatively broad spectrum of moods and emotions which make for interesting analyses.
+
 Visualizations, summaries, and exploratory statistical analyses. Justify the steps you took, and show any major changes to your ideas.
 
 Our additional shiny repos can be found: [here for all US](https://github.com/k-maciejewski/p8105_final_shinyUS) and [here for individual states](https://github.com/k-maciejewski/p8105_final_shiny_app).

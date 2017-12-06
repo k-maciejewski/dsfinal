@@ -97,6 +97,14 @@ us_tweets$tweet_content_stripped <- gsub("[^[:alpha:] ]", "", us_tweets$tweet_co
 
 #removes all words that are 1-2 letters long
 us_tweets$tweet_content_stripped <- gsub(" *\\b[[:alpha:]]{1,2}\\b *", " ", us_tweets$tweet_content_stripped) 
+
+#removes amp, abbreviation for ampersan
+us_tweets$tweet_content_stripped <- gsub(" amp ", " ", us_tweets$tweet_content_stripped) 
+
+#removes recurrence of jobs 
+us_tweets$tweet_content_stripped <- gsub("jobs", " job ", us_tweets$tweet_content_stripped) 
+us_tweets$tweet_content_stripped <- gsub("Jobs", " job ", us_tweets$tweet_content_stripped) 
+
 ```
 
 
@@ -139,11 +147,14 @@ us_tweets_long <- gather(us_tweets, sentiment, count, anger:trust,
 ```{r number of tweets per hour}
 us_tweets$hour <- as.POSIXct(us_tweets$hour, format = " %H:%M")
 
-ggplot(data = us_tweets, aes(x = hour)) +
+#generates plot of distribution of plots across time
+tweets_over_time <- 
+  ggplot(data = us_tweets, aes(x = hour)) +
   geom_histogram(stat = "count") +
-  xlab("Time") + ylab("Proportion of tweets") +
+  xlab("Time") + ylab("Number of Tweets") +
   ggtitle("Number of Tweets per Hour") +
-  scale_x_datetime(labels = date_format("%H:%M"))
+  scale_x_datetime(labels = date_format("%H:%M"), breaks = pretty_breaks(n = 10))
+
 ```
 
 From this graph, we noticed that we are missing some time intervals in our data set. We are not sure why this is. The website from which we obtained the data must not have scraped for these times. 
@@ -193,13 +204,17 @@ tweet_words %>%
 ```{r top 10 words}
 pal2 <- brewer.pal(8,"Dark2")
 
-tweet_words %>% 
+#creates bar chart of 10 most frequent words
+top_words <-
+  tweet_words %>% 
   count(word, sort = TRUE) %>% 
   top_n(10) %>% 
   mutate(word = fct_reorder(word, n)) %>% 
   ggplot(aes(x = word, y = n)) + 
   geom_bar(stat = "identity", fill = "blue", alpha = .6) + 
-  coord_flip()
+  coord_flip() +
+  labs(title = "10 Most Frequent Words", y = "Count", x = "Word")
+
 ```
 
 ```{r hashtag df}
